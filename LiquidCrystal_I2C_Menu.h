@@ -55,6 +55,7 @@
 //#define CYRILLIC_DISPLAY // Раскомментировать для поддержки дисплеев с кириллицей
 #define SCROLL_LONG_CAPTIONS // Раскомментировать для прокрутки длинных названий в меню и списках
 #define ENCODER_POOL_DELAY 5
+#define BUTTON_LONG_PRESS 1000
 #define NUMERIC_SIGNS "- "
 
 #define SCROLL_DELAY        800
@@ -63,7 +64,7 @@
 
 //#define INACTIVITY_TIMEOUT 60000 // Таймаут бездействия до выхода из функций
 
-enum eEncoderState {eNone, eLeft, eRight, eButton};
+enum eEncoderState {eNone, eLeft, eRight, eButton, eLongButton};
 
 struct sMenuItem {
   uint8_t parent;
@@ -275,7 +276,8 @@ class LiquidCrystal_I2C_Menu : public Print {
     uint8_t _pinB;
     uint8_t _pinBtn;
     unsigned long _prevPoolTime;
-    bool _pinButtonPrev;
+    unsigned long _buttonPressedTime;
+    uint8_t _pinButtonPrev;
     bool _pinAPrev;
     bool _showMenuTitle;
     uint8_t _menuLen;
