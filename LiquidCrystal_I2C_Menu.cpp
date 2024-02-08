@@ -389,6 +389,7 @@ void LiquidCrystal_I2C_Menu::attachEncoder(uint8_t pinA, uint8_t pinB, uint8_t p
   pinMode(_pinB, INPUT_PULLUP);
   pinMode(_pinBtn, INPUT_PULLUP);
   _prevPoolTime = 0;
+  _pinButtonPrev = 1;
 }
 
 eEncoderState LiquidCrystal_I2C_Menu::getEncoderState() {
@@ -396,21 +397,34 @@ eEncoderState LiquidCrystal_I2C_Menu::getEncoderState() {
   eEncoderState Result = eNone;
   if (millis() - _prevPoolTime > ENCODER_POOL_DELAY) {
     _prevPoolTime = millis();
-    if (digitalRead(_pinBtn) == LOW ) {
-      if (_pinButtonPrev) {
+    if (digitalRead(_pinBtn) == LOW ) { // Кнопка нажата
+      if (_pinButtonPrev == 1) { // Нажата только что
         _pinButtonPrev = 0;
-        Result = eButton;
+        _buttonPressedTime = millis(); // запомним время
+        Result = eNone; // пока ничего не возвращаем
+      }
+      else { // Кнопка удерживается нажатой
+        if ((_pinButtonPrev == 0) and (millis() - _buttonPressedTime >= BUTTON_LONG_PRESS)) {
+          // Долгое нажатие
+          _pinButtonPrev = 2; // Исключаем повторное срабатывание
+          Result = eLongButton;
+        }
       }
     }
     else {
-      _pinButtonPrev = 1;
-      encoderA = digitalRead(_pinA);
-      encoderB = digitalRead(_pinB);
-      if ((!encoderA) && (_pinAPrev)) {
-        if (encoderB) Result = eRight;
-        else          Result = eLeft;
+      if (_pinButtonPrev == 0) { // Кнопка отпущена
+        Result = eButton;
       }
-      _pinAPrev = encoderA;
+      else {
+        encoderA = digitalRead(_pinA);
+        encoderB = digitalRead(_pinB);
+        if ((!encoderA) && (_pinAPrev)) {
+          if (encoderB) Result = eRight;
+          else          Result = eLeft;
+        }
+        _pinAPrev = encoderA;
+      }
+      _pinButtonPrev = 1;
     }
   }
   #if defined(INACTIVITY_TIMEOUT)
