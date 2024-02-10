@@ -62,7 +62,7 @@
 #define DELAY_BEFORE_SCROLL 4000
 #define DELAY_AFTER_SCROLL  2000
 
-//#define INACTIVITY_TIMEOUT 60000 // Таймаут бездействия до выхода из функций
+#define INACTIVITY_TIMEOUT 60000 // Таймаут бездействия до выхода из функций
 
 enum eEncoderState {eNone, eLeft, eRight, eButton, eLongButton};
 
