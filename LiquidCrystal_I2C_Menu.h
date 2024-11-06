@@ -69,7 +69,7 @@ enum eEncoderState {eNone, eLeft, eRight, eButton, eLongButton};
 struct sMenuItem {
   uint8_t parent;
   uint8_t key;
-  char    *caption;
+  const char* caption;  // Изменено с char* на const char*
   void    (*handler)();
 };
 
